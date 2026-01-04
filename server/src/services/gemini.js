@@ -8,8 +8,8 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'PLACEHOLDER_KEY');
 
-// Use a lightweight model for embeddings
-const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+// Use gemini-embedding-001 for embeddings (consistent with other projects)
+const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
 // Use a capable model for chat
 const chatModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
