@@ -46,9 +46,6 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Routes
-app.use('/api', apiRoutes);
-
 // DB Connection
 // For serverless, we need to handle connection differently
 let isConnected = false;
@@ -70,15 +67,18 @@ const connectDB = async () => {
     }
 };
 
-// Connect to DB before handling requests
-app.use(async (req, res, next) => {
+// Middleware to connect to DB only for API routes
+const dbMiddleware = async (req, res, next) => {
     try {
         await connectDB();
         next();
     } catch (error) {
-        res.status(500).json({ error: 'Database connection failed' });
+        res.status(500).json({ error: 'Database connection failed', details: error.message });
     }
-});
+};
+
+// Apply DB middleware and routes
+app.use('/api', dbMiddleware, apiRoutes);
 
 // For local development
 if (process.env.NODE_ENV !== 'production') {

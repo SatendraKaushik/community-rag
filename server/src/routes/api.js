@@ -61,45 +61,13 @@ router.post('/init', async (req, res) => {
 
 
     // SEEDING: Check if default bot has content, if not, add "Elite Freelance Community" info
+    // Do this asynchronously to avoid timeout on first request
     const docCount = await Document.countDocuments({ botId: defaultBot._id });
     if (docCount === 0) {
-        const seedContent = `
-            Welcome to the Elite Freelance Community.
-            
-            Who We Are:
-            We are a collective of true top 1% talent, composed of ex-FAANG engineers, award-winning designers, and AI specialists.
-            Unlike traditional agencies, we operate as a high-performance swarm—assembling the perfect team for each project instantly.
-
-            Our Services:
-            1. **AI & RAG Solutions**: We build intelligent chatbots (like this one!), vector search systems, and automated agents using tailored LLMs.
-            2. **Full-Stack Engineering**: Next.js, React, Node.js, and Python. We prioritize speed, scalability, and "Wow" factor UIs.
-            3. **Premium Design**: Our electric, "professional orange" aesthetic converts visitors into clients. We handle UI/UX, branding, and motion graphics.
-            
-            Why Choose Us?
-            - **Speed**: We ship MVPs in days, not months.
-            - **Quality**: Zero technical debt. Enterprise-grade code from day one.
-            - **Communication**: You talk directly to the builders, not account managers.
-
-            Pricing:
-            We offer project-based pricing starting at $5k for MVPs, and retainer models for ongoing AI development.
-            
-            Contact:
-            Ready to build? Email us at hello@elitefreelance.io or book a demo on our calendar.
-        `;
-
-        // Split and embed
-        const chunks = seedContent.split('\n\n');
-        for (const chunk of chunks) {
-            if (chunk.trim().length > 10) {
-                const embedding = await getEmbedding(chunk);
-                await Document.create({
-                    botId: defaultBot._id,
-                    content: chunk.trim(),
-                    embedding
-                });
-            }
-        }
-        console.log("Default Bot Seeded with Freelance Data");
+        // Seed in background, don't wait for it
+        seedDefaultBot(defaultBot._id).catch(err => {
+            console.error('Background seeding error:', err);
+        });
     }
 
     res.json({
@@ -110,6 +78,52 @@ router.post('/init', async (req, res) => {
         messageCount: client.messageCount
     });
 });
+
+// Background seeding function
+async function seedDefaultBot(botId) {
+    const seedContent = `
+        Welcome to the Elite Freelance Community.
+        
+        Who We Are:
+        We are a collective of true top 1% talent, composed of ex-FAANG engineers, award-winning designers, and AI specialists.
+        Unlike traditional agencies, we operate as a high-performance swarm—assembling the perfect team for each project instantly.
+
+        Our Services:
+        1. **AI & RAG Solutions**: We build intelligent chatbots (like this one!), vector search systems, and automated agents using tailored LLMs.
+        2. **Full-Stack Engineering**: Next.js, React, Node.js, and Python. We prioritize speed, scalability, and "Wow" factor UIs.
+        3. **Premium Design**: Our electric, "professional orange" aesthetic converts visitors into clients. We handle UI/UX, branding, and motion graphics.
+        
+        Why Choose Us?
+        - **Speed**: We ship MVPs in days, not months.
+        - **Quality**: Zero technical debt. Enterprise-grade code from day one.
+        - **Communication**: You talk directly to the builders, not account managers.
+
+        Pricing:
+        We offer project-based pricing starting at $5k for MVPs, and retainer models for ongoing AI development.
+        
+        Contact:
+        Ready to build? Email us at hello@elitefreelance.io or book a demo on our calendar.
+    `;
+
+    // Split and embed
+    const chunks = seedContent.split('\n\n');
+    for (const chunk of chunks) {
+        if (chunk.trim().length > 10) {
+            try {
+                const embedding = await getEmbedding(chunk);
+                await Document.create({
+                    botId: botId,
+                    content: chunk.trim(),
+                    embedding
+                });
+            } catch (err) {
+                console.error('Error seeding chunk:', err);
+            }
+        }
+    }
+    console.log("Default Bot Seeded with Freelance Data");
+}
+
 
 // Create Custom Bot & Upload Content
 router.post('/custom-bot', async (req, res) => {

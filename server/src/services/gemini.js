@@ -2,6 +2,10 @@ const dotenv = require("dotenv");
 dotenv.config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
+if (!process.env.GEMINI_API_KEY) {
+    console.error('CRITICAL: GEMINI_API_KEY environment variable is not set!');
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'PLACEHOLDER_KEY');
 
 // Use a lightweight model for embeddings
