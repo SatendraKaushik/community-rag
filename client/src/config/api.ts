@@ -2,8 +2,8 @@
 // Change this URL when deploying to production
 export const API_CONFIG = {
     // For local development
-    BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
-    // BASE_URL:"https://community-rag-tau.vercel.app",
+    // BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+    BASE_URL:"https://community-rag-tau.vercel.app",
 
     // API endpoints
     ENDPOINTS: {
