@@ -150,7 +150,14 @@ export default function ChatWindow({ botId, sessionId, title, promptStarters = [
                 /* Chat Active - Normal Layout */
                 <>
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-gray-50">
+                    <div
+                        className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-gray-50"
+                        style={{
+                            WebkitOverflowScrolling: 'touch',
+                            touchAction: 'pan-y',
+                            overscrollBehavior: 'contain'
+                        }}
+                    >
                         <AnimatePresence>
                             {messages.map((msg, i) => (
                                 <motion.div
