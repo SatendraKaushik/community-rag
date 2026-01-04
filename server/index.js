@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 // CORS configuration for both development and production
 const allowedOrigins = [
     'http://localhost:3000',  // Local development
-    'community-rag-g1vy.vercel.app',  // Alternative local port
+    'https://community-rag-g1vy.vercel.app',
     'https://community-rag-g1vy-ogv9vtlpi-satendrakaushiks-projects.vercel.app',  // Production client
     process.env.CLIENT_URL,   // Additional client URL (set in Vercel env vars)
 ];
