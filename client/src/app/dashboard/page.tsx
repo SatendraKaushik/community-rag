@@ -27,7 +27,7 @@ export default function Dashboard() {
             let storedSession = localStorage.getItem('rag_session_id');
             try {
                 const res = await axios.post(getApiUrl(API_CONFIG.ENDPOINTS.INIT), { sessionId: storedSession });
-                console.log("Session Init:", res.data); // Debug
+               
                 setSessionId(res.data.sessionId);
                 setDefaultBotId(res.data.defaultBotId);
                 setDefaultBotPromptStarters(res.data.defaultBotPromptStarters || []);
